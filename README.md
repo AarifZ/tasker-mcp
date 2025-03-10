@@ -64,7 +64,7 @@ The `tasker-mcp-server-cli` application accepts the following flags:
 
 #### Example Configuration for Claude Desktop with stdio transport
 
-\`\`\`json
+```json
 {
   "mcpServers": {
     "tasker": {
@@ -82,7 +82,7 @@ The `tasker-mcp-server-cli` application accepts the following flags:
     }
   }
 }
-\`\`\`
+```
 
 ---
 
