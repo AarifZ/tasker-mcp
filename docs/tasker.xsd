@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://example.com/tasker"
+    xmlns="http://example.com/tasker"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+    <!--
+        XSD for Tasker ProfileVariable element:
+          - <pvit> is always "t"
+          - <pvt> enumerations expanded to include new codes like "bn", "cl", etc.
+          - <clearout> defaults to false (true if "Same as Value" is checked in Tasker)
+          - <immutable> defaults to false
+          - <pvci> defaults to true
+          - <strout> defaults to true
+          - includes optional <pvv> for current variable value
+          - <pvid> is the id of the parent Task.
+          - Each ProfileVariable must have an sr attribute (e.g. sr="pv0") that is sequentially numbered within the task.
+    -->
+
+    <!-- pvitType: always "t" in Tasker for the variable input type. -->
+    <xsd:simpleType name="pvitType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="t"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="pvtType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="onoff"/>  <!-- on/off toggle -->
+            <xsd:enumeration value="n"/>      <!-- numeric -->
+            <xsd:enumeration value="b"/>      <!-- boolean -->
+            <xsd:enumeration value="t"/>      <!-- plain text -->
+            <xsd:enumeration value="yn"/>     <!-- yes/no -->
+            <xsd:enumeration value="f"/>      <!-- file -->
+            <xsd:enumeration value="fs"/>     <!-- file (system) -->
+            <xsd:enumeration value="fss"/>    <!-- files (system) -->
+            <xsd:enumeration value="i"/>      <!-- image -->
+            <xsd:enumeration value="is"/>     <!-- images -->
+            <xsd:enumeration value="d"/>      <!-- directory -->
+            <xsd:enumeration value="ds"/>     <!-- directory (system) -->
+            <xsd:enumeration value="ws"/>     <!-- WiFi SSID -->
+            <xsd:enumeration value="wm"/>     <!-- WiFi MAC -->
+            <xsd:enumeration value="bn"/>     <!-- Bluetooth name or MAC -->
+            <xsd:enumeration value="cl"/>     <!-- Color -->
+            <xsd:enumeration value="ln"/>     <!-- Language -->
+            <xsd:enumeration value="ttsv"/>   <!-- TTS voice -->
+            <xsd:enumeration value="can"/>    <!-- Calendar -->
+            <xsd:enumeration value="cae"/>    <!-- Calendar entry -->
+            <xsd:enumeration value="tz"/>     <!-- Time zone -->
+            <xsd:enumeration value="ta"/>     <!-- Task -->
+            <xsd:enumeration value="prf"/>    <!-- Profile -->
+            <xsd:enumeration value="prj"/>    <!-- Project -->
+            <xsd:enumeration value="scn"/>    <!-- Scene -->
+            <xsd:enumeration value="c"/>      <!-- Contact -->
+            <xsd:enumeration value="cn"/>     <!-- Contact number -->
+            <xsd:enumeration value="cg"/>     <!-- Contact or Contact Group -->
+            <xsd:enumeration value="ti"/>     <!-- Time -->
+            <xsd:enumeration value="da"/>     <!-- Date -->
+            <xsd:enumeration value="a"/>      <!-- App -->
+            <xsd:enumeration value="as"/>     <!-- Apps -->
+            <xsd:enumeration value="la"/>     <!-- Launcher -->
+            <xsd:enumeration value="cac"/>    <!-- Certificate -->
+            <xsd:enumeration value="wv2"/>    <!-- Widget V2 -->
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!-- pvnType: pattern ensures variable names start with '%'. -->
+    <xsd:simpleType name="pvnType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="%.*"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="ProfileVariable">
+        <xsd:complexType>
+            <xsd:sequence>
+                <!-- If 'true', the variable is cleared after the profile or task ends.
+                     Defaults to false, but set to true when "Same as Value" is checked in Tasker. -->
+                <xsd:element name="clearout" type="xsd:boolean" default="false" />
+
+                <!-- The value used if the variable is exported or shared externally. -->
+                <xsd:element name="exportval" type="xsd:string" minOccurs="0" />
+
+                <!-- If 'true', the variable is locked from changes. Defaults to false. -->
+                <xsd:element name="immutable" type="xsd:boolean" default="false" />
+
+                <!-- Whether Tasker prompts the user to configure the variable on import. Defaults to true. -->
+                <xsd:element name="pvci" type="xsd:boolean" default="true" />
+
+                <!-- A textual description for your variable (internal notes, etc.). -->
+                <xsd:element name="pvd" type="xsd:string" />
+
+                <!-- The friendly display name for the variable in Tasker’s UI. -->
+                <xsd:element name="pvdn" type="xsd:string" />
+
+                <!-- The ID that Tasker uses to keep track of the variable.
+                     This value must be the id of the parent Task element. -->
+                <xsd:element name="pvid" type="xsd:int">
+                  <xsd:annotation>
+                    <xsd:documentation>
+                      The ID of the parent Task element. This value must match the task's id.
+                    </xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+
+                <!-- pvit: always 't' per the current known usage in Tasker. -->
+                <xsd:element name="pvit" type="pvitType" />
+
+                <!-- The actual variable name, e.g. %btd, %bmac, %colour, etc. -->
+                <xsd:element name="pvn" type="pvnType" />
+
+                <!-- The "variable type" used by Tasker, e.g. 'bn', 'cl', 'ln', 'ttsv', etc. -->
+                <xsd:element name="pvt" type="pvtType" />
+
+                <!-- Optional: the current value of the variable (may be changed or read by tasks). -->
+                <xsd:element name="pvv" type="xsd:string" minOccurs="0" />
+
+                <!-- If 'true', Tasker treats it as structured (like JSON). Defaults to true. -->
+                <xsd:element name="strout" type="xsd:boolean" default="true" />
+            </xsd:sequence>
+            <!-- The 'sr' attribute is required and must follow the pattern "pv" followed by one or more digits.
+                 This attribute serves as a sequential identifier (scoped to each task). -->
+            <xsd:attribute name="sr" use="required">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="pv[0-9]+"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

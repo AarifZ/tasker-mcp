@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "tasker": {
+      "command": "/home/luis/tasker-mcp/dist/tasker-mcp-server-cli-x86_64",
+      "args": [
+        "-tools",
+        "/home/luis/tasker-mcp/dist/toolDescriptions.json",
+        "-tasker-host",
+        "192.168.1.123"
+      ]
+    }
+  }
+}
